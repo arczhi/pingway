@@ -59,11 +59,13 @@ impl ProxyHttp for Pingway {
         let clone_req_header = session.req_header().clone(); // avoid double borrow with variable session
         let uri = clone_req_header.uri.path();
         let mut backend_addr = "";
-        let uri_parts:Vec<&str> = uri.split("/").collect();
-        let uri_prefix = &format!("/{}",uri_parts[1]);
+        // let uri_parts:Vec<&str> = uri.split("/").collect();
+        // let uri_prefix = &format!("/{}",uri_parts[1]);
         
-        if let Some(addr) = self.upstream.get(uri_prefix) {
+        let mut match_flag = false;
+        for (uri_prefix,addr) in self.upstream.iter() {
             if uri.starts_with(uri_prefix) {
+                match_flag = true;
                 let new_uri:http::Uri;
                 if let Err(err) = uri.replace(uri_prefix, "").parse::<http::Uri>() {
                     // uri like /cloud
@@ -76,9 +78,11 @@ impl ProxyHttp for Pingway {
                 session.req_header_mut().set_uri(new_uri);
                 backend_addr = addr;
             }
-        }else{
-            backend_addr = "0.0.0.0:6199";
         }
+        if !match_flag {
+            backend_addr = "0.0.0.0:6199"
+        }
+
         let peer = Box::new(HttpPeer::new(backend_addr, config::USE_SSL, "one.one.one.one".to_string()));
         Ok(peer)
     }
@@ -123,7 +127,12 @@ impl ProxyHttp for Pingway {
         let resp_body_byte = ctx.response_body.to_vec();
         let resp_body = String::from_utf8_lossy(&resp_body_byte);
         let log_content = format!("[{req_time}] {req_summary} , cost: {req_cost_time} ms , req_uri: {req_uri} , header: {req_header:?} , req_body: {req_body:?}, resp: {resp_body:?} \n");
-        let _ = self.access_log.lock().unwrap().write_all(log_content.as_bytes()); // write_data
+        match self.access_log.lock() {
+            Ok(mut log_guard) => {
+                log_guard.write_all(log_content.as_bytes())
+            }, // write_data
+            Err(_) => ()
+        }
         if self.prometheus_enabled {
             self.req_counter.inc();
         }
@@ -136,7 +145,7 @@ fn main() {
     let conf_path =  Opt::default().conf.unwrap();
     let config = config::load_config_from_file(&conf_path).unwrap();
     let current_dir = env::current_dir().expect("current dir error");
-    let conf_path = if let Some(p) = conf_path.strip_prefix("./") {p} else { &"" }; // "".as_ref(); // 将 "" 转换为 &'static str 类型的引用
+    let conf_path = if let Some(p) = conf_path.strip_prefix("./") {p} else { &conf_path }; // "".as_ref(); // 将 "" 转换为 &'static str 类型的引用
     let abs_path = Path::new(&current_dir).join(conf_path);
     let abs_config_path = abs_path.to_str().unwrap();
 
