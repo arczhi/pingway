@@ -1,0 +1,21 @@
+[package]
+name = "pingway"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait="0.1"
+pingora = "0.1.0"
+pingora-core = "0.1.0"
+pingora-http = "0.1.0"
+pingora-proxy = "0.1.0"
+serde = "1.0"
+serde_yaml = "0.8"
+regex = "1.5"
+lazy_static = "1.4"
+http = "1.1.0"
+prometheus = "0.13.3"
+chrono = "0.4"
+bytes = "1.6.0"
