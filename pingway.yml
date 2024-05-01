@@ -12,7 +12,7 @@ upstream:
   - uri_prefix: /jk
     addr: "127.0.0.1:9696"
   - uri_prefix: /cloud/index
-    addr: "touchcloud.top:80"
+    addr: "127.0.0.1:80"
   - uri_prefix: /test
     addr: "www.test.com:80"
   - uri_prefix: /lang
