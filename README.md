@@ -13,10 +13,13 @@ Pingora https://github.com/cloudflare/pingora
 3. prometheus int counter metrics
 
 ## How to use ?
-> pingway -c pingway.yml
-> # Daemonize the server
-> pingway -c pingway.yml -d
-
+```
+pingway -c pingway.yml
+```
+Daemonize the server
+```
+pingway -c pingway.yml -d
+```
 ## Arguments (same with pingora)
 | Argument      | Effect        | default|
 | ------------- |-------------| ----|
