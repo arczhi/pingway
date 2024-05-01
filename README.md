@@ -3,11 +3,14 @@
 ![alt text](logo.png)
 
 ## What is Pingway ?
-Pingway is a gateway scratch based on pingora ! 
-( pingora is a rust library for building fast, reliable and evolvable network services.  )
-Pingora https://github.com/cloudflare/pingora
+Pingway is [a gateway scratch based on pingora](https://github.com/arczhi/pingway) ! 
 
-## Featurre Highlights
+## What is Pingora ?
+Pingora is a Rust framework to [build fast, reliable and programmable networked systems](https://blog.cloudflare.com/pingora-open-source).
+
+
+
+## Feature Highlights
 1. routing forward
 2. access log
 3. prometheus int counter metrics
